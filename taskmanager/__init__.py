@@ -7,7 +7,15 @@ if os.path.exists("env.py"):
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DB_URL")
+
+if os.environ.get("DEVELOPMENT") == "True":
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DB_URL")
+else:
+    uri = os.environ.get("DATABASE_URL")
+    if uri.startswitch("postgres://"):
+        uri = uri.replace("postgres://", "postgresq://", 1)
+    app.config["SQLALCHEMY_DATABASE_URI"] = uri
+
 
 db = SQLAlchemy(app)
 
